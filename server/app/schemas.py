@@ -29,8 +29,8 @@ class ShowUser(BaseModel):
     username: str
     class Config:
         from_attributes = True
-        
-    
+
+
 class TemperatureCreate(BaseModel):
     temp: float
 
@@ -39,6 +39,32 @@ class Temperature(BaseModel):
     id: int
     timestamp: datetime
     temp: float
+
+    class Config:
+        from_attributes = True
+
+
+class HumidityCreate(BaseModel):
+    humidity: float
+
+
+class Humidity(BaseModel):
+    id: int
+    timestamp: datetime
+    humidity: float
+
+    class Config:
+        from_attributes = True
+
+
+class VibrationsCreate(BaseModel):
+    vibration_level: float
+
+
+class Vibrations(BaseModel):
+    id: int
+    timestamp: datetime
+    vibration_level: float
 
     class Config:
         from_attributes = True

@@ -10,7 +10,7 @@ router = APIRouter(tags=["Temperature"], prefix="/temp")
 
 
 @router.post('/', response_model = schemas.TemperatureCreate)
-def add_new_record(request: schemas.TemperatureCreate, db: Session = Depends(get_db)):
+def add_new_record(request: schemas.TemperatureCreate, db: Session = Depends(get_db), current_user: schemas.User = Depends(oauth2.get_current_user)):
     return temperature.add_new_record(request, db)
 
 @router.get('/', response_model = List[schemas.Temperature])
