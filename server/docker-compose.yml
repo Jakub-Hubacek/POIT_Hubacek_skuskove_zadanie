@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  postgresql:
+    container_name: postgres_container
+    image: postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: poit
+    ports:
+      - "5432:5432"
+  pgadmin:
+    container_name: pgadmin4_container
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: silneheslopreaplikaciuPOIT
+      PGADMIN_LISTEN_PORT: 8081
+    ports:
+      - "5050:8081"
+    depends_on:
+      - postgresql
+  fastapi:
+    container_name: fastapi_container
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    restart: always
+    volumes:
+      - ../server:/server
+    ports:
+      - "8000:80"
+    environment:
+      - DATABASE_URL=postgresql://admin:admin@postgresql:5432/poit
+    env_file:
+      - .env
+    depends_on:
+      - pgadmin
+volumes:
+  postgres_data:

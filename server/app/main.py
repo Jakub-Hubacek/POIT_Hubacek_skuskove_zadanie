@@ -1,0 +1,21 @@
+from fastapi import FastAPI
+from . import models
+from .database import engine
+from contextlib import asynccontextmanager
+from .database import get_db
+from .routers import authentication
+
+# models.Base.metadata.drop_all(bind=engine)
+models.Base.metadata.create_all(bind=engine)  # creates all tables in the database
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # this code is executed before startup
+    yield
+    # this code is executed before shutdown
+
+
+app = FastAPI(lifespan=lifespan)
+
+app.include_router(authentication.router)

@@ -38,7 +38,7 @@ Tento projekt je súčasťou záverečného zadania ku skúške a zameriava sa n
 ## ⚙️ Použité technológie
 
 ### Backend:
-- **Python 3.10+**
+- **Python 3.8**
 - **FastAPI** – REST API pre komunikáciu medzi frontendom a hardvérom
 - **PostgreSQL** – relačná databáza pre archiváciu údajov
 - **Docker** – kontajnerizácia backendu
