@@ -9,27 +9,30 @@ class User(Base):
 
 class Tempterature(Base):
     __tablename__ = "temp_data"
-    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    id = Column(Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     timestamp = Column(DateTime, nullable=False)
     temp = Column(Float, nullable=False)    
 
 
 class Humidity(Base):
     __tablename__ = "humidity_data"
-    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    id = Column(
+        Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     timestamp = Column(DateTime, nullable=False)
     humidity = Column(Float, nullable=False)
 
 
 class Vibrations(Base):
     __tablename__ = "vibration_data"
-    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    id = Column(
+        Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     timestamp = Column(DateTime, nullable=False)
     vibration_level = Column(Float, nullable=False)
 
 
 class Cooling(Base):
     __tablename__ = "cooling_data"
-    id = Column(Integer, primary_key=True, unique=True, nullable=False)
+    id = Column(
+        Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     timestamp = Column(DateTime, nullable=False)
     cooling = Column(Integer, nullable=False)

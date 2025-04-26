@@ -29,3 +29,16 @@ class ShowUser(BaseModel):
     username: str
     class Config:
         from_attributes = True
+        
+    
+class TemperatureCreate(BaseModel):
+    temp: float
+
+
+class Temperature(BaseModel):
+    id: int
+    timestamp: datetime
+    temp: float
+
+    class Config:
+        from_attributes = True

@@ -34,25 +34,25 @@ def login(
     }
 
 
-# @router.get("/me", response_model=schemas.ShowUser)
-# def get_current_user(
-#     db: Session = Depends(get_db),
-#     user: schemas.ShowUserOnly = Depends(oauth2.get_current_user),
-# ):
-#     # Query the database for the current user's details along with the contact details
-#     me = (
-#         db.query(models.User).filter(models.User.username == user.username)
-#         .first()
-#     )
+@router.get("/me", response_model=schemas.ShowUser)
+def get_current_user(
+    db: Session = Depends(get_db),
+    user: schemas.ShowUser = Depends(oauth2.get_current_user),
+):
+    # Query the database for the current user's details along with the contact details
+    me = (
+        db.query(models.User).filter(models.User.username == user.username)
+        .first()
+    )
 
-#     # Check if the user was found
-#     if not me:
-#         raise HTTPException(status_code=404, detail="User not found")
+    # Check if the user was found
+    if not me:
+        raise HTTPException(status_code=404, detail="User not found")
 
-#     # Create ShowUser from the ORM model and add contact details
-#     user_data = schemas.ShowUser.from_orm(me)
+    # Create ShowUser from the ORM model and add contact details
+    user_data = schemas.ShowUser.from_orm(me)
    
-#     return user_data
+    return user_data
 
 
 @router.post("/refresh")
