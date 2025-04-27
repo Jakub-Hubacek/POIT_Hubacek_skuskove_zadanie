@@ -3,7 +3,7 @@ from . import models
 from .database import engine
 from contextlib import asynccontextmanager
 from .database import get_db
-from .routers import authentication, temperature, humidity, vibrations
+from .routers import authentication, temperature, humidity, vibrations, cooling
 
 # models.Base.metadata.drop_all(bind=engine)
 models.Base.metadata.create_all(bind=engine)  # creates all tables in the database
@@ -22,3 +22,4 @@ app.include_router(authentication.router)
 app.include_router(temperature.router)
 app.include_router(humidity.router)
 app.include_router(vibrations.router)
+app.include_router(cooling.router)

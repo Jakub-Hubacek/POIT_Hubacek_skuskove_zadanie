@@ -68,3 +68,22 @@ class Vibrations(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class CoolingCreate(BaseModel):
+    cooling: int
+    
+    
+class Cooling(BaseModel):
+    id: int
+    timestamp: datetime
+    cooling: int
+
+    class Config:
+        from_attributes = True
+        
+class CoolingStatus(BaseModel):
+    cooling: int
+
+    class Config:
+        from_attributes = True
