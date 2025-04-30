@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: url('https://www.transparenttextures.com/patterns/white-diamond.png');
+            background-color: #f8f9fa; /* Fallback color */
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="#">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="sites/graph.html">Graphs</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-5">
+        <div class="card mx-auto" style="max-width: 400px;">
+            <div class="card-body">
+                <h2 class="card-title text-center">Environment Dashboard</h2>
+                <div class="status my-4">
+                    <p><strong>Temperature:</strong> <span id="temperature" class="badge bg-primary">Loading...</span> °C</p>
+                    <p><strong>Humidity:</strong> <span id="humidity" class="badge bg-success">Loading...</span> %</p>
+                    <p><strong>Cooling Status:</strong> <span id="cooling-status" class="badge bg-warning text-dark">Loading...</span></p>
+                </div>
+                <div class="d-grid">
+                    <button id="toggle-cooling" class="btn btn-primary">Toggle Cooling</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('http://your-backend-url/api/status');
+                const data = await response.json();
+                document.getElementById('temperature').textContent = data.temperature;
+                document.getElementById('humidity').textContent = data.humidity;
+                document.getElementById('cooling-status').textContent = data.cooling ? 'On' : 'Off';
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        async function toggleCooling() {
+            try {
+                const response = await fetch('http://your-backend-url/api/toggle-cooling', {
+                    method: 'POST'
+                });
+                if (response.ok) {
+                    fetchData(); // Refresh data after toggling
+                } else {
+                    console.error('Error toggling cooling');
+                }
+            } catch (error) {
+                console.error('Error toggling cooling:', error);
+            }
+        }
+
+        document.getElementById('toggle-cooling').addEventListener('click', toggleCooling);
+
+        // Fetch data on page load
+        fetchData();
+    </script>
+</body>
+</html>

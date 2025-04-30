@@ -36,3 +36,8 @@ def get_record_from_to(db: Session, from_date: datetime, to_date: datetime):
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No records found")
     return records
 
+def get_last_record(db: Session):
+    record = db.query(models.Tempterature).order_by(models.Tempterature.timestamp.desc()).first()
+    if not record:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="No records found")
+    return record

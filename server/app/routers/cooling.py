@@ -56,7 +56,7 @@ def control_cooling(
 @router.get("/status", response_model=int)
 def get_cooling_status(
     db: Session = Depends(get_db),
-    current_user: schemas.User = Depends(oauth2.get_current_user),
+   
 ):
     # Logic to get the current status of the cooling system
     # This could be a database query or a call to the ESP32
