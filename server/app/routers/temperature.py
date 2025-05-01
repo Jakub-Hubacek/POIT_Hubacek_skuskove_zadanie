@@ -40,3 +40,4 @@ def get_record_from_to(
     db: Session = Depends(get_db),
 ):
     return temperature.get_record_from_to(db, from_date, to_date)
+

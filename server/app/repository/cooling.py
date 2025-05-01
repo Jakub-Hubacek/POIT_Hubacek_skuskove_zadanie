@@ -50,3 +50,11 @@ def get_cooling_status(db: Session):
             status_code=status.HTTP_404_NOT_FOUND, detail="No records found"
         )
     return records.cooling
+
+def get_last_record(db: Session):
+    record = db.query(models.Cooling).order_by(models.Cooling.timestamp.desc()).first()
+    if not record:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No records found"
+        )
+    return record

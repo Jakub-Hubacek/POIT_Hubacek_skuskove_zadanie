@@ -11,7 +11,8 @@ from ..hashing import Hash
 
 def add_new_record(request: schemas.Humidity, db: Session):
     new_record = models.Humidity(
-        timestamp=datetime.now() + timedelta(hours=2), humidity=request.humidity
+        timestamp=request.timestamp, 
+        humidity=request.humidity
     )
     db.add(new_record)
     db.commit()
@@ -37,6 +38,15 @@ def get_record_from_to(db: Session, from_date: datetime, to_date: datetime):
         )
         .all()
     )
+    if not records:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="No records found"
+        )
+    return records
+
+
+def get_last_record(db: Session):
+    records = db.query(models.Humidity).order_by(models.Humidity.timestamp.desc()).first()
     if not records:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="No records found"

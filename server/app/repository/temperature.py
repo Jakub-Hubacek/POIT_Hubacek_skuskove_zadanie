@@ -13,7 +13,7 @@ from ..hashing import Hash
 
 def add_new_record(request: schemas.Temperature, db: Session):
     new_record = models.Tempterature(
-        timestamp=datetime.now() + timedelta(hours=2),
+        timestamp=request.timestamp,
         temp=request.temp
     )
     db.add(new_record)

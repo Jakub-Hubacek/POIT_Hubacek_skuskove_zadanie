@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends, Query, status, File, UploadFile
 from .. import schemas, database, oauth2
 from sqlalchemy.orm import Session
 from ..repository import cooling
+from datetime import datetime, timedelta
 
 get_db = database.get_db
 router = APIRouter(tags=["Cooling"], prefix="/cooling")
@@ -46,11 +47,11 @@ def control_cooling(
     # Logic to send the command to ESP32
     if state:
         # Code to turn on cooling
-        cooling.add_new_record(schemas.CoolingCreate(cooling=1), db)
+        cooling.add_new_record(schemas.CoolingCreate(cooling=1, ), db)
         return {"message": "Cooling turned on"}
     else:
         # Code to turn off cooling
-        cooling.add_new_record(schemas.CoolingCreate(cooling=0), db)
+        cooling.add_new_record(schemas.CoolingCreate(cooling=0, timestamp=datetime.now() + timedelta(hours=2)), db)
         return {"message": "Cooling turned off"} 
     
 @router.get("/status", response_model=int)
@@ -62,3 +63,4 @@ def get_cooling_status(
     # This could be a database query or a call to the ESP32
     status = cooling.get_cooling_status(db)
     return status
+

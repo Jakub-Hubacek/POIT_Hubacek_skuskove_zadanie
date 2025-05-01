@@ -19,6 +19,11 @@ def get_all_records(db: Session = Depends(get_db)):
     return  humidity.get_all_records(db)
 
 
+@router.get("/last", response_model=schemas.Humidity)
+def get_last_record(db: Session = Depends(get_db)):
+    return humidity.get_last_record(db)
+
+
 @router.get("/from_to", response_model=List[schemas.Humidity])
 def get_record_from_to(
     from_date: str = Query(

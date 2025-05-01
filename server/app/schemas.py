@@ -33,6 +33,7 @@ class ShowUser(BaseModel):
 
 class TemperatureCreate(BaseModel):
     temp: float
+    timestamp: datetime
 
 
 class Temperature(BaseModel):
@@ -46,6 +47,7 @@ class Temperature(BaseModel):
 
 class HumidityCreate(BaseModel):
     humidity: float
+    timestamp: datetime
 
 
 class Humidity(BaseModel):
@@ -72,6 +74,7 @@ class Vibrations(BaseModel):
 
 class CoolingCreate(BaseModel):
     cooling: int
+    timestamp: datetime
     
     
 class Cooling(BaseModel):
