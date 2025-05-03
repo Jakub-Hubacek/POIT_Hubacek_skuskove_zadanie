@@ -34,7 +34,7 @@ const unsigned long tokenValidity = 480 * 60 * 1000UL; // 480 minutes
 
 // ==== Timer ====
 unsigned long lastSent = 0;
-const unsigned long sendInterval = 10000;
+const unsigned long sendInterval = 5000;
 
 // ==== Login Credentials ====
 String loginUser = "jakub";
@@ -74,7 +74,8 @@ void setup() {
 
 void loop() {
   
-  if ((millis() - lastSent >= sendInterval)) {
+  //if ((millis() - lastSent >= sendInterval) || (lastCoolingStatus != getCoolingStatus())) {
+  if ((millis() - lastSent >= sendInterval)){
     if (!isTokenValid()) {
       if (!refreshAccessToken()) {
         if (!login()) {
