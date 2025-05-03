@@ -24,6 +24,9 @@ def export_record_from_to(
         ...,
         description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
     ),
+    measurement_id: Optional[int] = Query(
+        None, description="Measurement ID to filter by"
+    ),
     db: Session = Depends(get_db),
 ):
     return export.export_records_to_csv(db, from_date, to_date)

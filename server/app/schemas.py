@@ -90,3 +90,18 @@ class CoolingStatus(BaseModel):
 
     class Config:
         from_attributes = True
+        
+class MeasurementCreate(BaseModel):
+    from_timestamp: datetime
+
+class MeasurementEnd(BaseModel):
+    to_timestamp: datetime
+
+    
+class Measurement(BaseModel):
+    id: int
+    from_timestamp: datetime
+    to_timestamp: Optional[datetime] = None
+
+    class Config:
+        from_attributes = True

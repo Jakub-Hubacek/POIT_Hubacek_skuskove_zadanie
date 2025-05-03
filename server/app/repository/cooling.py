@@ -11,7 +11,7 @@ from ..hashing import Hash
 
 def add_new_record(request: schemas.Cooling, db: Session):
     new_record = models.Cooling(
-        timestamp=datetime.now() + timedelta(hours=2), cooling=request.cooling
+        timestamp=request.timestamp, cooling=request.cooling
     )
     db.add(new_record)
     db.commit()

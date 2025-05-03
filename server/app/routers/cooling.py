@@ -38,29 +38,45 @@ def get_record_from_to(
 ):
     return cooling.get_record_from_to(db, from_date, to_date)
 
+
 @router.post("/control", status_code=status.HTTP_200_OK)
 def control_cooling(
-    state: bool = Query(..., description="Set to true to turn on cooling, false to turn off"),
+    state: bool = Query(
+        ..., description="Set to true to turn on cooling, false to turn off"
+    ),
     db: Session = Depends(get_db),
     current_user: schemas.User = Depends(oauth2.get_current_user),
-    ):
+):
     # Logic to send the command to ESP32
     if state:
         # Code to turn on cooling
-        cooling.add_new_record(schemas.CoolingCreate(cooling=1, ), db)
+        cooling.add_new_record(
+            schemas.CoolingCreate(
+            cooling=1, 
+            timestamp=(datetime.now() + timedelta(hours=2)).strftime("%Y-%m-%d %H:%M:%S")
+            ),
+            db,
+        )
         return {"message": "Cooling turned on"}
     else:
         # Code to turn off cooling
-        cooling.add_new_record(schemas.CoolingCreate(cooling=0, timestamp=datetime.now() + timedelta(hours=2)), db)
-        return {"message": "Cooling turned off"} 
-    
+        cooling.add_new_record(
+            schemas.CoolingCreate(
+                cooling=0,
+                timestamp=(datetime.now() + timedelta(hours=2)).strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                ),
+            ),
+            db,
+        )
+        return {"message": "Cooling turned off"}
+
+
 @router.get("/status", response_model=int)
 def get_cooling_status(
     db: Session = Depends(get_db),
-   
 ):
     # Logic to get the current status of the cooling system
     # This could be a database query or a call to the ESP32
     status = cooling.get_cooling_status(db)
     return status
-

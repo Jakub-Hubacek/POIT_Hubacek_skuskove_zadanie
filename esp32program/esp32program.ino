@@ -47,7 +47,7 @@ const char* ntpServer = "pool.ntp.org";
 const char* bufferFile = "/unsent.txt";
 int getCoolingStatus();
 int lastCoolingStatus = getCoolingStatus(); // Initialize to an invalid state
-
+int coolingStatus = 0;
 void setup() {
   Serial.begin(115200);
   dht.begin();
@@ -86,12 +86,11 @@ void loop() {
 
     float temperature = dht.readTemperature();
     float humidity = dht.readHumidity();
-    
-    int coolingStatus = getCoolingStatus();
     lastCoolingStatus = coolingStatus;
-    Serial.println(coolingStatus);
+    coolingStatus = getCoolingStatus();
+
     bool cooling = coolingStatus == 1;
-    if (cooling && temperature > 55) {
+    if (!cooling && temperature > 55) {
       cooling = true;
     } 
     digitalWrite(relayPin, cooling ? HIGH : LOW);
@@ -265,6 +264,7 @@ String getISO8601Time() {
   char buffer[30];
 
   time(&now);
+  now += 2 * 3600; // Adjust for timezone (UTC+2)
   gmtime_r(&now, &timeinfo);
   strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S.000Z", &timeinfo);
   return String(buffer);
@@ -284,7 +284,6 @@ int getCoolingStatus() {
   int httpCode = http.GET();
   if (httpCode == 200) {
     String payload = http.getString();
-    //Serial.println("Cooling status response: " + payload);
     http.end();
     return payload.toInt(); // Convert the response to an integer
   } else {

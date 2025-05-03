@@ -36,3 +36,10 @@ class Cooling(Base):
         Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
     timestamp = Column(DateTime, nullable=False)
     cooling = Column(Integer, nullable=False)
+
+
+class Measurement(Base):
+    __tablename__ = "measurements"
+    id = Column(Integer, primary_key=True, unique=True, nullable=False, autoincrement=True)
+    from_timestamp = Column(DateTime, nullable=False)
+    to_timestamp = Column(DateTime, nullable=True)
