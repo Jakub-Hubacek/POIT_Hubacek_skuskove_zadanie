@@ -9,7 +9,7 @@ from .. import models
 from ..hashing import Hash
 
 
-def start_measurement(request: schemas.Temperature, db: Session):
+def start_measurement(request: schemas.Measurement, db: Session):
     existing_measurement = db.query(models.Measurement).filter(models.Measurement.to_timestamp == None).first()
     if existing_measurement:
         raise HTTPException(

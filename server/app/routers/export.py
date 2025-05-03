@@ -11,22 +11,19 @@ get_db = database.get_db
 router = APIRouter(tags=["Export"], prefix="/export")
 
 
-
-
-
 @router.get("/from_to", response_class=StreamingResponse)
 def export_record_from_to(
-    from_date: datetime = Query(
-        ...,
-        description="From date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
-    ),
-    to_date: datetime = Query(
-        ...,
-        description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
-    ),
     measurement_id: Optional[int] = Query(
         None, description="Measurement ID to filter by"
     ),
+    from_date: Optional[datetime] = Query(
+        None,
+        description="From date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
+    ),
+    to_date: Optional[datetime] = Query(
+        None,
+        description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
+    ),
     db: Session = Depends(get_db),
 ):
-    return export.export_records_to_csv(db, from_date, to_date)
+    return export.export_records_to_csv(db, from_date, to_date, measurement_id)

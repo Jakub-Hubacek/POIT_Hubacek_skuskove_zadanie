@@ -12,7 +12,7 @@ from io import StringIO
 from fastapi.responses import StreamingResponse
 
 
-def get_record_from_to(db: Session, from_date: datetime, to_date: datetime, measurement_id: Optional[int] = None):
+def get_record_from_to(db: Session, from_date: Optional[datetime] = None, to_date: Optional[datetime] = None, measurement_id: Optional[int] = None):
     if measurement_id is not None:
         measurement = db.query(models.Measurement).filter(models.Measurement.id == measurement_id).first()
         if not measurement:
@@ -21,6 +21,11 @@ def get_record_from_to(db: Session, from_date: datetime, to_date: datetime, meas
             )
         from_date = measurement.from_timestamp
         to_date = measurement.to_timestamp
+    if (from_date is None or to_date is None) and measurement_id is None:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Not enough information to filter records",
+        )
     records = (
         db.query(
             models.Tempterature.timestamp,
@@ -51,7 +56,12 @@ def get_record_from_to(db: Session, from_date: datetime, to_date: datetime, meas
     ]
 
 
-def export_records_to_csv(db: Session, from_date: datetime, to_date: datetime, measurement_id: Optional[int] = None):
+def export_records_to_csv(
+    db: Session,
+    from_date: Optional[datetime] = None,
+    to_date: Optional[datetime] = None,
+    measurement_id: Optional[int] = None,
+):
     records = get_record_from_to(db, from_date, to_date, measurement_id)
 
     output = StringIO()
