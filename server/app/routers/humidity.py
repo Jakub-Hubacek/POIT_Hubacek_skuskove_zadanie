@@ -15,12 +15,18 @@ def add_new_record(request: schemas.HumidityCreate, db: Session = Depends(get_db
 
 
 @router.get("/", response_model=List[schemas.Humidity])
-def get_all_records(db: Session = Depends(get_db)):
+def get_all_records(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
     return  humidity.get_all_records(db)
 
 
 @router.get("/last", response_model=schemas.Humidity)
-def get_last_record(db: Session = Depends(get_db)):
+def get_last_record(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
     return humidity.get_last_record(db)
 
 
@@ -35,5 +41,6 @@ def get_record_from_to(
         description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
     ),
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return humidity.get_record_from_to(db, from_date, to_date)

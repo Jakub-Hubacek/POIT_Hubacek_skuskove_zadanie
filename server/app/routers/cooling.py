@@ -20,7 +20,10 @@ def add_new_record(
 
 
 @router.get("/", response_model=List[schemas.Cooling])
-def get_all_records(db: Session = Depends(get_db)):
+def get_all_records(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
     return cooling.get_all_records(db)
 
 
@@ -35,6 +38,7 @@ def get_record_from_to(
         description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
     ),
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return cooling.get_record_from_to(db, from_date, to_date)
 
@@ -75,6 +79,7 @@ def control_cooling(
 @router.get("/status", response_model=int)
 def get_cooling_status(
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     # Logic to get the current status of the cooling system
     # This could be a database query or a call to the ESP32

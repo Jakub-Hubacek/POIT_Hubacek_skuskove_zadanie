@@ -25,5 +25,6 @@ def export_record_from_to(
         description="To date in YYYY-MM-DD format (optionally add time as well by adding THH:MM:SS)",
     ),
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return export.export_records_to_csv(db, from_date, to_date, measurement_id)

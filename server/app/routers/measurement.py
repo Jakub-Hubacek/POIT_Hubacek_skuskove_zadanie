@@ -28,13 +28,17 @@ def end_measurement(
 
 
 @router.get("/", response_model=List[schemas.Measurement])
-def get_all_records(db: Session = Depends(get_db)):
+def get_all_records(
+    db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
+):
     return measurement.get_all_records(db)
 
 
 @router.get("/last", response_model=schemas.Measurement)
 def get_last_record(
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return measurement.get_last_record(db)
 
@@ -43,5 +47,6 @@ def get_last_record(
 def get_measurement_by_id(
     id: int,
     db: Session = Depends(get_db),
+    current_user: schemas.User = Depends(oauth2.get_current_user),
 ):
     return measurement.get_measurement_by_id(id, db)
