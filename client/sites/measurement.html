@@ -16,6 +16,9 @@
             margin-top: 20px;
         }
     </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.3.0/raphael.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/justgage@1.4.0/justgage.min.js"></script>
+
 </head>
 
 <body>
@@ -52,12 +55,26 @@
         <div>
             <canvas id="measurement-graph" style="width: 100%; height: 300px;"></canvas>
         </div>
-        <div class="status mt-3">
-            <p><strong>Temperature:</strong> <span id="temperature" class="badge bg-primary">N/A</span> °C</p>
-            <p><strong>Humidity:</strong> <span id="humidity" class="badge bg-success">N/A</span> %</p>
-            <p><strong>Cooling Status:</strong> <span id="cooling-status" class="badge bg-warning text-dark">N/A</span>
-            </p>
+        <div class="row mt-4 text-center">
+            <div class="col-md-6">
+                <h5>Temperature Gauge</h5>
+                <div id="temp-gauge" style="width:200px; height:160px; margin:auto;"></div>
+            </div>
+            <div class="col-md-6">
+                <h5>Humidity Gauge</h5>
+                <div id="humidity-gauge" style="width:200px; height:160px; margin:auto;"></div>
+            </div>
         </div>
+        <div class="d-grid mx-auto my-4" style="max-width: 200px;">
+            <button id="toggle-cooling" class="btn btn-primary btn-block">Toggle Cooling</button>
+        </div>
+    </div>
+    <div class="status mt-3 text-center">
+        <p><strong>Temperature:</strong> <span id="temperature" class="badge bg-primary">N/A</span> °C</p>
+        <p><strong>Humidity:</strong> <span id="humidity" class="badge bg-success">N/A</span> %</p>
+        <p><strong>Cooling Status:</strong> <span id="cooling-status" class="badge bg-warning text-dark">N/A</span>
+        </p>
+    </div>
     </div>
 
     <div class="container section">
@@ -146,7 +163,7 @@
             });
             if (res.ok) {
                 toTimestamp = ts;
-                //downloadCSV(fromTimestamp, toTimestamp);
+                //downloadCSV(fromTimestamp, toTimestamp); // Uncomment if you want to download window automatically pop up
             }
         }
 
@@ -161,6 +178,18 @@
                 const temperature = await tempRes.json();
                 const humidity = await humRes.json();
                 const cooling = await coolRes.json();
+                const toggleButton = document.getElementById('toggle-cooling');
+                toggleButton.dataset.cooling = cooling;
+                if (cooling) {
+                    toggleButton.classList.remove('btn-success');
+                    toggleButton.classList.add('btn-danger');
+                    toggleButton.textContent = 'Turn Cooling Off';
+                } else {
+                    toggleButton.classList.remove('btn-danger');
+                    toggleButton.classList.add('btn-success');
+                    toggleButton.textContent = 'Turn Cooling On';
+                }
+
 
                 if (temperature.timestamp !== lastTempTimestamp || humidity.timestamp !== lastHumidityTimestamp) {
                     lastTempTimestamp = temperature.timestamp;
@@ -180,6 +209,8 @@
                     document.getElementById('temperature').textContent = temperature.temp;
                     document.getElementById('humidity').textContent = humidity.humidity;
                     document.getElementById('cooling-status').textContent = cooling ? 'On' : 'Off';
+                    tempGauge.refresh(temperature.temp);
+                    humidityGauge.refresh(humidity.humidity);
                 }
             } catch (error) {
                 console.error('Error:', error);
@@ -206,8 +237,9 @@
             const btn = document.getElementById('toggle-measurement');
             const dlBtn = document.getElementById('download-measurement');
             btn.textContent = isMeasuring ? 'Stop Measurement' : 'Start Measurement';
-
             if (isMeasuring) {
+                btn.classList.remove('btn-primary');
+                btn.classList.add('btn-danger');
                 await startMeasurement();
                 chart.data.labels = [];
                 chart.data.datasets[0].data = [];
@@ -218,6 +250,8 @@
                 window.measurementInterval = setInterval(fetchMeasurementData, 5000);
                 dlBtn.style.display = 'none';
             } else {
+                btn.classList.remove('btn-danger');
+                btn.classList.add('btn-primary');
                 clearInterval(window.measurementInterval);
                 await endMeasurement();
                 dlBtn.style.display = 'block';
@@ -243,12 +277,10 @@
             chart.data.labels = [];
             chart.data.datasets[0].data = [];
             chart.data.datasets[1].data = [];
-
             const [temps, hums] = await Promise.all([
                 fetchWithAuth(`${API_BASE_URL}/temp/from_to?from_date=${measurement.from_timestamp}&to_date=${measurement.to_timestamp}`).then(res => res.json()),
                 fetchWithAuth(`${API_BASE_URL}/humidity/from_to?from_date=${measurement.from_timestamp}&to_date=${measurement.to_timestamp}`).then(res => res.json()),
             ]);
-
             temps.forEach((t, i) => {
                 chart.data.labels.push(t.timestamp);
                 chart.data.datasets[0].data.push(t.temp);
@@ -263,14 +295,51 @@
             const m = JSON.parse(selected);
             downloadCSV(m.from_timestamp, m.to_timestamp);
         });
-    document.getElementById('download-measurement').addEventListener('click', async () => {
-        if (!fromTimestamp || !toTimestamp) {
-            alert('Measurement timestamps are missing.');
-            return;
-        }
-        downloadCSV(fromTimestamp, toTimestamp);
-    });
+        document.getElementById('download-measurement').addEventListener('click', async () => {
+            if (!fromTimestamp || !toTimestamp) {
+                alert('Measurement timestamps are missing.');
+                return;
+            }
+            downloadCSV(fromTimestamp, toTimestamp);
+        });
+        let tempGauge = new JustGage({
+            id: "temp-gauge",
+            value: 0,
+            min: -10,
+            max: 50,
+            title: "Temp (°C)",
+            label: "°C",
+            levelColors: ["#00bcd4", "#ffc107", "#f44336"]
+        });
 
+        let humidityGauge = new JustGage({
+            id: "humidity-gauge",
+            value: 0,
+            min: 0,
+            max: 100,
+            title: "Humidity (%)",
+            label: "%",
+            levelColors: ["#2396fa", "#005299", "#023663"]
+        });
+        async function toggleCooling() {
+            try {
+                const currentState = document.getElementById('toggle-cooling').dataset.cooling === '1' || document.getElementById('toggle-cooling').dataset.cooling === 'true';
+                const nextState = !currentState;
+
+                const response = await fetchWithAuth(`${API_BASE_URL}/cooling/control?state=${nextState}`, {
+                    method: 'POST',
+                });
+
+                if (response.ok) {
+                    fetchMeasurementData();
+                } else {
+                    console.error('Error toggling cooling');
+                }
+            } catch (error) {
+                console.error('Error toggling cooling:', error);
+            }
+        }
+        document.getElementById('toggle-cooling').addEventListener('click', toggleCooling);
         loadMeasurements();
     </script>
 </body>

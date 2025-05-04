@@ -11,6 +11,7 @@ const char* ssid = "ZTE-WIFI";
 const char* password = "04072002";
 
 // ==== API Info ====
+// Replace with your server's IP address and port
 const char* loginUrl = "http://192.168.1.142:8000/login";
 const char* refreshUrl = "http://192.168.1.142:8000/refresh";
 const char* tempUrl = "http://192.168.1.142:8000/temp/";
@@ -46,7 +47,7 @@ const char* ntpServer = "pool.ntp.org";
 // ==== File Buffers ====
 const char* bufferFile = "/unsent.txt";
 int getCoolingStatus();
-int lastCoolingStatus = getCoolingStatus(); // Initialize to an invalid state
+int lastCoolingStatus = getCoolingStatus();
 int coolingStatus = 0;
 void setup() {
   Serial.begin(115200);
@@ -65,7 +66,7 @@ void setup() {
   Serial.println(" connected.");
 
   configTime(0, 0, ntpServer);
-  while (time(nullptr) < 100000) delay(100); // wait for time sync
+  while (time(nullptr) < 100000) delay(100);
 
   if (!login()) {
     Serial.println("Initial login failed!");
@@ -74,7 +75,7 @@ void setup() {
 
 void loop() {
   
-  //if ((millis() - lastSent >= sendInterval) || (lastCoolingStatus != getCoolingStatus())) {
+  //if ((millis() - lastSent >= sendInterval) || (lastCoolingStatus != getCoolingStatus())) { // use for fast pooling
   if ((millis() - lastSent >= sendInterval)){
     if (!isTokenValid()) {
       if (!refreshAccessToken()) {
@@ -98,15 +99,12 @@ void loop() {
 
     String timestamp = getISO8601Time();
 
-    // Try sending any buffered data first
     resendBufferedData();
 
-    // Send current data
     bool tempOk = sendSensorData(tempUrl, "temp", temperature, timestamp);
     bool humOk = sendSensorData(humidityUrl, "humidity", humidity, timestamp);
     bool coolOk = sendSensorData(coolingUrl, "cooling", cooling ? 1 : 0, timestamp);
 
-    // If any failed, store it
     if (!tempOk) bufferData(tempUrl, "temp", temperature, timestamp);
     if (!humOk)  bufferData(humidityUrl, "humidity", humidity, timestamp);
     if (!coolOk) bufferData(coolingUrl, "cooling", cooling ? 1 : 0, timestamp);
@@ -275,7 +273,7 @@ String getISO8601Time() {
 int getCoolingStatus() {
   if (WiFi.status() != WL_CONNECTED) {
     Serial.println("WiFi not connected.");
-    return -1; // Return -1 to indicate an error
+    return -1;
   }
 
   HTTPClient http;
@@ -286,10 +284,10 @@ int getCoolingStatus() {
   if (httpCode == 200) {
     String payload = http.getString();
     http.end();
-    return payload.toInt(); // Convert the response to an integer
+    return payload.toInt();
   } else {
     Serial.println("Failed to get cooling status: " + String(httpCode));
     http.end();
-    return -1; // Return -1 to indicate an error
+    return -1;
   }
 }

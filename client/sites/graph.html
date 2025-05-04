@@ -4,25 +4,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
-    <!-- Bootstrap CSS -->
+    <title>All-Time Data Graph</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
     <style>
         body {
             background: url('https://www.transparenttextures.com/patterns/white-diamond.png');
             background-color: #f8f9fa;
-            /* Fallback color */
         }
-    
-        .login-container {
-            max-width: 400px;
-            margin: 100px auto;
+
+        .section {
+            margin-top: 20px;
+        }
+
+        canvas {
+            max-width: 100%;
+            height: 400px;
         }
     </style>
 </head>
 
 <body>
-    <!-- Navigation Bar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Dashboard</a>
@@ -46,9 +51,101 @@
         </div>
     </nav>
 
-    
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <div class="container section">
+        <h2>All-Time Temperature and Humidity</h2>
+        <canvas id="allTimeChart"></canvas>
+    </div>
 
+    <script>
+        const API_BASE_URL = 'http://localhost:8000';
+        let chartInstance = null;
+
+        async function fetchWithAuth(url, options = {}) {
+            const token = localStorage.getItem('accessToken');
+            if (!token) {
+                alert('Unauthorized. Redirecting to login.');
+                window.location.href = '../login.html';
+                return;
+            }
+            options.headers = { ...options.headers, Authorization: `Bearer ${token}` };
+            const response = await fetch(url, options);
+            if (response.status === 401) {
+                alert('Session expired. Redirecting to login.');
+                localStorage.clear();
+                window.location.href = '../login.html';
+                return;
+            }
+            return response;
+        }
+
+        async function loadAllTimeData() {
+            try {
+                const [tempRes, humRes] = await Promise.all([
+                    fetchWithAuth(`${API_BASE_URL}/temp/`).then(res => res.json()),
+                    fetchWithAuth(`${API_BASE_URL}/humidity/`).then(res => res.json())
+                ]);
+                const tempMap = new Map();
+                tempRes.forEach(t => tempMap.set(t.timestamp, t.temp));
+                const humMap = new Map();
+                humRes.forEach(h => humMap.set(h.timestamp, h.humidity));
+                const allTimestamps = [...new Set([...tempMap.keys(), ...humMap.keys()])].sort();
+                const tempData = allTimestamps.map(ts => tempMap.get(ts) ?? null);
+                const humData = allTimestamps.map(ts => humMap.get(ts) ?? null);
+                const ctx = document.getElementById('allTimeChart').getContext('2d');
+                if (chartInstance) chartInstance.destroy();
+                chartInstance = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: allTimestamps,
+                        datasets: [
+                            {
+                                label: 'Temperature (°C)',
+                                data: tempData,
+                                borderColor: 'rgba(255, 99, 132, 1)',
+                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                                spanGaps: true
+                            },
+                            {
+                                label: 'Humidity (%)',
+                                data: humData,
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                                spanGaps: true
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    tooltipFormat: 'yyyy-MM-dd HH:mm',
+                                    displayFormats: {
+                                        hour: 'MMM d HH:mm'
+                                    }
+                                },
+                                title: {
+                                    display: true,
+                                    text: 'Timestamp'
+                                }
+                            },
+                            y: {
+                                title: {
+                                    display: true,
+                                    text: 'Value'
+                                }
+                            }
+                        }
+                    }
+                });
+            } catch (err) {
+                console.error('Error loading data:', err);
+            }
+        }
+        loadAllTimeData();
+        setInterval(loadAllTimeData, 5000); // auto-refresh every 5 seconds
+    </script>
 </body>
 
 </html>
