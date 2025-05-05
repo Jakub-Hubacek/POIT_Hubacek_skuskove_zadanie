@@ -27,11 +27,11 @@ services:
   fastapi:
     container_name: fastapi_container
     build:
-      context: ./
+      context: .
       dockerfile: Dockerfile
     restart: always
     volumes:
-      - ../server:/server
+      - ./server:/app
     ports:
       - "8000:80"
     environment:
@@ -40,5 +40,15 @@ services:
       - .env
     depends_on:
       - pgadmin
+  frontend:
+      container_name: client_container
+      build:
+        context: ./client
+        dockerfile: Dockerfile
+      ports:
+        - "3000:80"
+      restart: always
+      depends_on:
+        - fastapi
 volumes:
   postgres_data:
