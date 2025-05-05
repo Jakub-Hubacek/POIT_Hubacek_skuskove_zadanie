@@ -2,10 +2,12 @@ from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
-# SQLALCHEMY_DATABASE_URL = 'postgresql://admin:admin@postgresql:5432/gem-manager' #conn for deployment
 SQLALCHEMY_DATABASE_URL = (
-    "postgresql://admin:admin@postgresql:5432/poit"  # conn for local
+    "postgresql://admin:admin@localhost:5432/poit"  # conn for deployment
 )
+# SQLALCHEMY_DATABASE_URL = (
+#     "postgresql://admin:admin@postgresql:5432/poit"  # conn for local
+# )
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
