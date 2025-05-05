@@ -48,11 +48,11 @@ def init_db():
     db: Session = SessionLocal()
     try:
         # Check if the user already exists
-        user = db.query(User).filter(User.name == "jakub").first()
+        user = db.query(User).filter(User.username == "jakub").first()
         if not user:
             # Add the user if it doesn't exist
             new_user = User(
-                name="jakub",
+                username="jakub",
                 password="$2a$12$kqCQXu4xhtyo5rYKUtNe9uutnrA/EW3mUo6uE3flaso5aw9udodz6",
             )
             db.add(new_user)
