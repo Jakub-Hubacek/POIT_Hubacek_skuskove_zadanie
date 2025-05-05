@@ -9,6 +9,9 @@ load_dotenv()
 
 # Get the database URL from the environment
 SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
+if not SQLALCHEMY_DATABASE_URL:
+    raise RuntimeError("DATABASE_URL not set in environment")
+
 # SQLALCHEMY_DATABASE_URL = (
 #     "postgresql://admin:admin@postgresql:5432/poit"  # conn for local
 # )
