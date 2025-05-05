@@ -35,7 +35,7 @@ services:
     ports:
       - "8000:80"
     environment:
-      - DATABASE_URL=postgresql://admin:admin@localhost:5432/poit
+      - DATABASE_URL=postgresql://admin:admin@postgresql:5432/poit
     env_file:
       - .env
     depends_on:
