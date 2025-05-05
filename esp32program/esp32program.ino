@@ -12,12 +12,12 @@ const char* password = "04072002";
 
 // ==== API Info ====
 // Replace with your server's IP address and port
-const char* loginUrl = "http://192.168.1.142:8000/login";
-const char* refreshUrl = "http://192.168.1.142:8000/refresh";
-const char* tempUrl = "http://192.168.1.142:8000/temp/";
-const char* humidityUrl = "http://192.168.1.142:8000/humidity/";
-const char* coolingUrl = "http://192.168.1.142:8000/cooling/";
-const char* coolingStatusUrl = "http://192.168.1.142:8000/cooling/status";
+const char* loginUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/login";
+const char* refreshUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/refresh";
+const char* tempUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/temp/";
+const char* humidityUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/humidity/";
+const char* coolingUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/cooling/";
+const char* coolingStatusUrl = "https://poithubacekskuskovezadanie-production.up.railway.app/cooling/status";
 
 // ==== DHT Sensor ====
 #define DHTPIN 4
