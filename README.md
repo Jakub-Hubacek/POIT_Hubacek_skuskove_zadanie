@@ -45,7 +45,7 @@ Tento projekt je súčasťou záverečného zadania ku skúške a zameriava sa n
 - Bootstrap 5.3.0-alpha1 – responzivita, rozloženie, štýly
 - Chart.js – zobrazenie grafov
 - JustGage – pre ručičkové ukazovatele
-- Raphael.js – závislosť pre JustGage.
+- Raphael.js – závislosť pre JustGage
 
 
 ### Hardvér:
@@ -62,3 +62,12 @@ Tento projekt je súčasťou záverečného zadania ku skúške a zameriava sa n
 - Frontend vizualizuje údaje
 - Ovládanie vetrania prebieha buď automaticky (na základe podmienok) alebo manuálne cez frontend
 
+## 🚀 Možné rozšírenia projektu
+
+- **Pridanie ďalších senzorov** – napríklad senzor kvality vzduchu (CO2, VOC), senzor vibrácií
+- **Podpora notifikácií** – zasielanie upozornení cez e-mail alebo mobilné aplikácie
+- **Strojové učenie** – predikcia podmienok na základe historických údajov
+- **Podpora viacerých zariadení** – monitorovanie a riadenie viacerých 3D tlačiarní súčasne
+- **Bezdrôtové aktualizácie firmware** – OTA (Over-The-Air) aktualizácie pre ESP32
+- **Bezpečnostné funkcie** – detekcia porúch alebo neštandardných podmienok
+- **Prenos obrazu pomocou ESP32-CAM** – integrácia modulu ESP32-CAM na streamovanie videa v reálnom čase, monitorovanie 3D tlače na diaľku a detekciu problémov počas tlače.
